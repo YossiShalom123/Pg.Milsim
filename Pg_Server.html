@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <title>PG - Perfect Gaming</title>
@@ -117,6 +117,37 @@ header p{color:#ffb3b3;font-size:18px}
   box-shadow:0 0 30px red;
 }
 
+/* כפתורים חיצוניים משודרגים */
+.external-section{
+  text-align:center;
+  margin:60px 0;
+  z-index:10;
+}
+.external-section h2{
+  color:red;
+  font-size:36px;
+  margin-bottom:30px;
+  text-shadow:0 0 15px rgba(255,0,0,.7);
+}
+.btn{
+  display:inline-block;
+  margin:15px;
+  padding:18px 40px;
+  font-size:18px;
+  font-weight:bold;
+  color:white;
+  background:linear-gradient(45deg,darkred,red);
+  border-radius:30px;
+  text-decoration:none;
+  box-shadow:0 0 25px red;
+  transition:transform .3s, box-shadow .3s;
+}
+.btn:hover{
+  transform:scale(1.1) translateY(-3px);
+  box-shadow:0 0 55px red;
+}
+
+/* Footer */
 footer{
   padding:30px;
   background:#050000;
@@ -144,7 +175,6 @@ footer{
 
 <section class="section">
   <h2>תיאור המשחק</h2>
-
   <div class="vs-container">
     <div class="card combat">
       <h3>ארגון PG</h3>
@@ -153,9 +183,7 @@ footer{
         פשיטות מתוכננות ועבודת צוות מדויקת.
       </p>
     </div>
-
     <div class="vs">VS</div>
-
     <div class="card training">
       <h3>צה״ל</h3>
       <p>
@@ -215,6 +243,16 @@ footer{
   </ul>
 </section>
 
+<div class="separator"></div>
+
+<!-- כפתורים חיצוניים משודרגים -->
+<section class="external-section">
+  <h2>כלים שימושיים</h2>
+  <a class="btn" href="https://osublo3211-gif.github.io/perfectgaming-unban/?v=3" target="_blank">UnBan</a>
+  <a class="btn" href="https://my.israelgives.org/he/campaign/pgmilsim" target="_blank">תרומות</a>
+  <a class="btn" href="https://discord.gg/epE6e2T4W8" target="_blank">שרת דיסקורד</a>
+</section>
+
 <footer>
 © Pg - Perfect Gaming | Milsim | PUBLIC
 </footer>
@@ -231,8 +269,8 @@ for(let i=0;i<120;i++){
   snow.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,s:Math.random()*0.6+0.3});
 }
 
+// ברקים
 let lightning=[],last=0;
-
 function createLightning(){
   let x=Math.random()*canvas.width;
   let y=0;
@@ -277,5 +315,6 @@ function draw(){
 }
 draw();
 </script>
+
 </body>
 </html>
