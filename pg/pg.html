@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>PG - Perfect Gaming</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;800&display=swap');
+
+* { box-sizing:border-box; margin:0; padding:0; }
+
+body{
+  font-family:'Heebo',sans-serif;
+  background:radial-gradient(circle at top,#220000,#050000);
+  color:#fff;
+  min-height:200vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  overflow-x:hidden;
+}
+
+#effectCanvas{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+}
+
+/* לוגו */
+.logo-wrapper{margin-top:40px;z-index:10}
+.logo{
+  width:140px;height:140px;
+  border-radius:50%;
+  border:4px solid red;
+  background:url("https://cdn.discordapp.com/role-icons/1446868211973750847/d32deb65843ebf3b8e1b5a66faca9378.webp") center/cover no-repeat;
+  box-shadow:0 0 40px rgba(255,0,0,.7);
+  cursor:pointer;
+}
+.logo.animate{animation:spin 1s ease}
+@keyframes spin{
+  0%{transform:scale(1) rotate(0)}
+  50%{transform:scale(1.2) rotate(180deg)}
+  100%{transform:scale(1) rotate(360deg)}
+}
+
+header{text-align:center;max-width:800px;z-index:10;padding:20px}
+header h1{font-size:44px;margin:20px 0}
+header p{color:#ffb3b3;font-size:18px}
+
+.separator{
+  width:120px;height:3px;background:red;
+  margin:60px 0;border-radius:10px;z-index:10;
+}
+
+/* כרטיסיות */
+.section{padding:60px 20px;text-align:center;max-width:1100px;z-index:10}
+.section h2{color:red;font-size:34px;margin-bottom:40px}
+.cards{display:flex;justify-content:center;gap:30px;flex-wrap:wrap}
+
+.card{
+  width:280px;
+  background:rgba(255,0,0,0.08);
+  border:1px solid rgba(255,0,0,.5);
+  border-radius:18px;
+  padding:30px;
+  box-shadow:0 0 25px rgba(255,0,0,.35);
+  cursor:pointer;
+  transition:.3s;
+}
+.card:hover{transform:scale(1.05);box-shadow:0 0 45px red}
+.card h3{color:red;margin-bottom:12px}
+.card p{color:#ffd6d6;line-height:1.7}
+
+.training{border-color:#ff7b7b}
+.combat{border-color:red}
+
+/* VS */
+.vs-container{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:30px;
+  flex-wrap:wrap;
+}
+.vs{
+  font-size:56px;
+  font-weight:800;
+  color:white;
+  text-shadow:0 0 20px red;
+  animation:vsPulse 2s infinite;
+  cursor:pointer;
+}
+@keyframes vsPulse{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.15)}
+  100%{transform:scale(1)}
+}
+
+/* לוח זמנים */
+.schedule-list{
+  list-style:none;
+  max-width:420px;
+  margin:auto;
+}
+.schedule-list li{
+  padding:15px;
+  margin-bottom:10px;
+  border-radius:12px;
+  font-weight:bold;
+}
+.schedule-list .training{background:rgba(255,120,120,.15);border:1px solid #ff7b7b}
+.schedule-list .combat{background:rgba(255,0,0,.2);border:1px solid red}
+.schedule-list .night{
+  background:linear-gradient(45deg,darkred,red);
+  box-shadow:0 0 30px red;
+}
+
+/* כפתורים חיצוניים */
+.btn{
+  display:inline-block;
+  margin:15px 10px;
+  padding:15px 35px;
+  font-size:18px;
+  font-weight:bold;
+  color:white;
+  background:linear-gradient(45deg,darkred,red);
+  border-radius:30px;
+  text-decoration:none;
+  box-shadow:0 0 25px red;
+  transition:transform .3s, box-shadow .3s;
+}
+.btn:hover{
+  transform:scale(1.1);
+  box-shadow:0 0 55px red;
+}
+
+footer{
+  padding:30px;
+  background:#050000;
+  color:#ff8c8c;
+  width:100%;
+  text-align:center;
+  z-index:10;
+}
+</style>
+</head>
+
+<body>
+<canvas id="effectCanvas"></canvas>
+
+<div class="logo-wrapper">
+  <div class="logo" onclick="this.classList.add('animate');setTimeout(()=>this.classList.remove('animate'),1000)"></div>
+</div>
+
+<header>
+  <h1>PG - Perfect Gaming</h1>
+  <p>שרת RolePlay מלחמתי אינטנסיבי המבוסס על טקטיקה, פיקוד ומשמעת מלאה.</p>
+</header>
+
+<div class="separator"></div>
+
+<section class="section">
+  <h2>תיאור המשחק</h2>
+  <div class="vs-container">
+    <div class="card combat">
+      <h3>ארגון PG</h3>
+      <p>
+        ארגון לוחם הפועל במבצעים חשאיים, שליטה אזורית,
+        פשיטות מתוכננות ועבודת צוות מדויקת.
+      </p>
+    </div>
+    <div class="vs">VS</div>
+    <div class="card training">
+      <h3>צה״ל</h3>
+      <p>
+        כוח צבאי סדור עם פיקוד ברור, משמעת גבוהה,
+        הגנה, התקפה וניהול לחימה מאורגן.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="separator"></div>
+
+<section class="section">
+  <h2>מערכות וחוקים</h2>
+  <div class="cards">
+    <div class="card training">
+      <h3>RolePlay מלא</h3>
+      <p>
+        שמירה מוחלטת על דמות, החלטות ריאליסטיות
+        ועמידה בנהלים לאורך כל המשחק.
+      </p>
+    </div>
+    <div class="card combat">
+      <h3>מערכת לחימה</h3>
+      <p>
+        קרבות ירי ריאליסטיים, מבצעים טקטיים,
+        פציעות והשלכות אמיתיות לכל פעולה.
+      </p>
+    </div>
+    <div class="card">
+      <h3>ניהול השרת</h3>
+      <p>
+        הנהלה פעילה, אכיפה ברורה,
+        שמירה על סדר ורמה גבוהה.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="separator"></div>
+
+<section class="section">
+  <h2>⏱ לוח זמנים – אימונים ולחימה</h2>
+  <ul class="schedule-list">
+    <li class="training">11:00 – אימון</li>
+    <li class="combat">12:00 – לחימה</li>
+    <li class="training">13:00 – אימון</li>
+    <li class="combat">14:00 – לחימה</li>
+    <li class="training">15:00 – אימון</li>
+    <li class="combat">16:00 – לחימה</li>
+    <li class="training">17:00 – אימון</li>
+    <li class="combat">18:00 – לחימה</li>
+    <li class="combat">19:00 – לחימה</li>
+    <li class="combat">20:00 – לחימה</li>
+    <li class="training">21:00 – אימון</li>
+    <li class="night">22:00 – עד הבוקר לחימה ללא הגבלה</li>
+  </ul>
+</section>
+
+<div class="separator"></div>
+
+<!-- כפתורים חיצוניים -->
+<section class="section">
+  <a class="btn" href="https://osublo3211-gif.github.io/perfectgaming-unban/?v=3" target="_blank">UnBan</a>
+  <a class="btn" href="https://my.israelgives.org/he/campaign/pgmilsim" target="_blank">תרומות</a>
+  <a class="btn" href="https://discord.gg/epE6e2T4W8" target="_blank">שרת דיסקורד</a>
+</section>
+
+<footer>
+© Pg - Perfect Gaming | Milsim | PUBLIC
+</footer>
+
+<script>
+const canvas=document.getElementById("effectCanvas");
+const ctx=canvas.getContext("2d");
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+addEventListener("resize",resize);resize();
+
+// שלג
+const snow=[];
+for(let i=0;i<120;i++){
+  snow.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,s:Math.random()*0.6+0.3});
+}
+
+// ברקים
+let lightning=[],last=0;
+function createLightning(){
+  let x=Math.random()*canvas.width;
+  let y=0;
+  const path=[];
+  while(y<canvas.height){
+    y+=15;
+    x+=Math.random()*30-15;
+    path.push({x,y});
+  }
+  lightning.push({path,life:20});
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  snow.forEach(s=>{
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle="rgba(255,255,255,.8)";
+    ctx.fill();
+    s.y+=s.s;
+    if(s.y>canvas.height)s.y=0;
+  });
+
+  if(Date.now()-last>2000+Math.random()*1000){
+    createLightning();
+    last=Date.now();
+  }
+
+  lightning.forEach((l,i)=>{
+    ctx.beginPath();
+    ctx.moveTo(l.path[0].x,l.path[0].y);
+    l.path.forEach(p=>ctx.lineTo(p.x,p.y));
+    ctx.strokeStyle="rgba(255,255,255,.8)";
+    ctx.lineWidth=2;
+    ctx.stroke();
+    l.life--;
+    if(l.life<=0)lightning.splice(i,1);
+  });
+
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+
+</body>
+</html>
