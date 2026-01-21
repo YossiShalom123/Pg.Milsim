@@ -8,7 +8,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;800&display=swap');
 
-* { box-sizing:border-box; margin:0; padding:0; }
+*{margin:0;padding:0;box-sizing:border-box}
 
 body{
   font-family:'Heebo',sans-serif;
@@ -21,7 +21,7 @@ body{
   overflow-x:hidden;
 }
 
-/* ====== INTRO SCREEN ====== */
+/* ===== INTRO SCREEN ===== */
 #intro{
   position:fixed;
   inset:0;
@@ -33,38 +33,33 @@ body{
   justify-content:center;
 }
 
-/* מסגרת מסתובבת ללוגו במסך טעינה */
-.intro-logo-wrapper {
+.intro-logo-wrapper{
   width:180px;
   height:180px;
   border-radius:30px;
   padding:10px;
   background:rgba(255,0,0,0.3);
-  box-shadow:0 0 50px red, 0 0 80px rgba(255,0,0,0.5);
+  box-shadow:0 0 60px red, 0 0 80px rgba(255,0,0,0.5);
   display:flex;
   align-items:center;
   justify-content:center;
-  animation:spinLogo 6s linear infinite;
+  animation:spin 6s linear infinite;
 }
 
-#intro .intro-logo{
+.intro-logo{
   width:160px;
   height:160px;
   border-radius:24px;
   background:url("PGLOGOGIF.gif") center/cover no-repeat;
-  box-shadow:0 0 60px red;
 }
 
 #intro h1{
   margin-top:30px;
   font-size:42px;
   letter-spacing:4px;
-  text-shadow:0 0 20px red, 0 0 40px white;
-  animation:pulseText 2s infinite;
-  color:white;
+  text-shadow:0 0 20px red,0 0 40px white;
 }
 
-/* פס טעינה עם אחוזים */
 #progressBar{
   margin-top:30px;
   width:80%;
@@ -78,28 +73,22 @@ body{
 #progress{
   width:0%;
   height:100%;
-  background:linear-gradient(90deg, white, red);
+  background:linear-gradient(90deg,white,red);
   transition:width 0.05s linear;
 }
 #progressPercent{
   position:absolute;
-  top:0;
-  left:50%;
-  transform:translateX(-50%);
-  color:white;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   font-weight:bold;
   font-size:16px;
-  line-height:25px;
+  color:white;
   text-shadow:0 0 8px red;
 }
 
-/* אנימציות */
-@keyframes pulseText{
-  0%,100%{text-shadow:0 0 20px red, 0 0 40px white;}
-  50%{text-shadow:0 0 35px red, 0 0 60px white;}
-}
-
-/* ====== CANVAS EFFECTS ====== */
+/* ===== CANVAS EFFECTS ===== */
 #effectCanvas{
   position:fixed;
   inset:0;
@@ -107,25 +96,16 @@ body{
   pointer-events:none;
 }
 
-/* ====== LOGO באתר ====== */
-.logo-wrapper{margin-top:40px;z-index:10;display:flex;flex-direction:column;align-items:center;}
-.logo{
-  width:140px;height:140px;
-  border-radius:20px;
-  border:4px solid red;
-  background:url("PGLOGOGIF.gif") center/cover no-repeat;
-  box-shadow:0 0 40px rgba(255,0,0,.7);
-  cursor:pointer;
-  animation:spinLogo 20s linear infinite;
-  transition: transform 0.3s, box-shadow 0.3s;
+/* ===== LOGO באתר ===== */
+.logo-wrapper{
+  margin-top:40px;
+  z-index:10;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
-.logo:hover,
-.logo:active{
-  transform:scale(1.2);
-  box-shadow:0 0 55px red;
-}
-/* מסגרת סביב הלוגו באתר */
-.logo-wrapper .logo-frame {
+
+.logo-frame{
   width:160px;
   height:160px;
   border-radius:25px;
@@ -135,18 +115,49 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  animation:spinLogo 20s linear infinite;
+  animation:spin 20s linear infinite;
 }
 
-@keyframes spinLogo{
-  0%{transform:rotate(0deg);}
-  100%{transform:rotate(360deg);}
+.logo{
+  width:140px;
+  height:140px;
+  border-radius:20px;
+  background:url("PGLOGOGIF.gif") center/cover no-repeat;
+  box-shadow:0 0 40px rgba(255,0,0,.7);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
+.logo:hover{
+  transform:scale(1.2);
+  box-shadow:0 0 55px red;
+}
+
+/* כפתור מעבר לשרת */
+#serverButton{
+  margin-top:20px;
+  padding:12px 24px;
+  font-size:18px;
+  font-weight:bold;
+  color:white;
+  background:linear-gradient(45deg,darkred,red);
+  border-radius:30px;
+  text-decoration:none;
+  text-align:center;
+  box-shadow:0 0 25px red;
+  transition: transform .3s, box-shadow .3s, filter .3s;
+}
+#serverButton:hover{
+  transform:scale(1.05) translateY(-2px);
+  box-shadow:0 0 55px red;
+  filter:brightness(1.2);
+}
+
+/* HEADER */
 header{text-align:center;max-width:800px;z-index:10;padding:20px}
 header h1{font-size:44px;margin:20px 0;text-shadow:0 0 15px red;}
 header p{color:#ffb3b3;font-size:18px;text-shadow:0 0 8px rgba(255,0,0,.5);}
 
+/* Separator */
 .separator{
   width:120px;height:3px;background:red;
   margin:60px 0;border-radius:10px;z-index:10;
@@ -227,29 +238,9 @@ header p{color:#ffb3b3;font-size:18px;text-shadow:0 0 8px rgba(255,0,0,.5);}
   font-size:24px;
   font-weight:bold;
   color:white;
+  text-align:center;
   text-shadow:0 0 15px red;
   z-index:10;
-  text-align:center;
-}
-
-/* כפתור מעבר לשרת */
-#serverButton{
-  margin-top:20px;
-  padding:12px 24px;
-  font-size:18px;
-  font-weight:bold;
-  color:white;
-  background:linear-gradient(45deg,darkred,red);
-  border-radius:30px;
-  text-decoration:none;
-  text-align:center;
-  box-shadow:0 0 25px red;
-  transition: transform .3s, box-shadow .3s, filter .3s;
-}
-#serverButton:hover{
-  transform:scale(1.05) translateY(-2px);
-  box-shadow:0 0 55px red;
-  filter:brightness(1.2);
 }
 
 /* Footer */
@@ -261,6 +252,12 @@ footer{
   text-align:center;
   z-index:10;
   line-height:2;
+}
+
+/* ANIMATION */
+@keyframes spin{
+  0%{transform:rotate(0deg);}
+  100%{transform:rotate(360deg);}
 }
 </style>
 </head>
@@ -281,6 +278,7 @@ footer{
   </div>
 </div>
 
+<!-- LOGO -->
 <div class="logo-wrapper">
   <div class="logo-frame">
     <div class="logo"></div>
@@ -300,18 +298,12 @@ footer{
   <div class="vs-container">
     <div class="card combat">
       <h3>ארגון PG</h3>
-      <p>
-        ארגון לוחם הפועל במבצעים חשאיים, שליטה אזורית,
-        פשיטות מתוכננות ועבודת צוות מדויקת.
-      </p>
+      <p>ארגון לוחם הפועל במבצעים חשאיים, שליטה אזורית, פשיטות מתוכננות ועבודת צוות מדויקת.</p>
     </div>
     <div class="vs">VS</div>
     <div class="card training">
       <h3>צה״ל</h3>
-      <p>
-        כוח צבאי סדור עם פיקוד ברור, משמעת גבוהה,
-        הגנה, התקפה וניהול לחימה מאורגן.
-      </p>
+      <p>כוח צבאי סדור עם פיקוד ברור, משמעת גבוהה, הגנה, התקפה וניהול לחימה מאורגן.</p>
     </div>
   </div>
 </section>
@@ -323,24 +315,15 @@ footer{
   <div class="cards">
     <div class="card training">
       <h3>RolePlay מלא</h3>
-      <p>
-        שמירה מוחלטת על דמות, החלטות ריאליסטיות
-        ועמידה בנהלים לאורך כל המשחק.
-      </p>
+      <p>שמירה מוחלטת על דמות, החלטות ריאליסטיות ועמידה בנהלים לאורך כל המשחק.</p>
     </div>
     <div class="card combat">
       <h3>מערכת לחימה</h3>
-      <p>
-        קרבות ירי ריאליסטיים, מבצעים טקטיים,
-        פציעות והשלכות אמיתיות לכל פעולה.
-      </p>
+      <p>קרבות ירי ריאליסטיים, מבצעים טקטיים, פציעות והשלכות אמיתיות לכל פעולה.</p>
     </div>
     <div class="card">
       <h3>ניהול השרת</h3>
-      <p>
-        הנהלה פעילה, אכיפה ברורה,
-        שמירה על סדר ורמה גבוהה.
-      </p>
+      <p>הנהלה פעילה, אכיפה ברורה, שמירה על סדר ורמה גבוהה.</p>
     </div>
   </div>
 </section>
@@ -368,12 +351,12 @@ footer{
 
 <div class="separator"></div>
 
-<section class="external-section">
+<section class="section">
   <h2>קישורים</h2>
-  <div class="links-container">
-    <a class="btn btn-discord" href="https://discord.gg/epE6e2T4W8" target="_blank">שרת דיסקורד</a>
-    <a class="btn" href="https://osublo3211-gif.github.io/perfectgaming-unban/?v=3" target="_blank">UnBan</a>
-    <a class="btn" href="https://my.israelgives.org/he/campaign/pgmilsim" target="_blank">תרומות</a>
+  <div class="cards">
+    <a class="card" href="https://discord.gg/epE6e2T4W8" target="_blank">שרת דיסקורד</a>
+    <a class="card" href="https://osublo3211-gif.github.io/perfectgaming-unban/?v=3" target="_blank">UnBan</a>
+    <a class="card" href="https://my.israelgives.org/he/campaign/pgmilsim" target="_blank">תרומות</a>
   </div>
 </section>
 
@@ -383,38 +366,75 @@ footer{
 </footer>
 
 <script>
-// ============ CANVAS ============
-const canvas=document.getElementById("effectCanvas");
-const ctx=canvas.getContext("2d");
-function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
-window.addEventListener("resize",resizeCanvas);
-resizeCanvas();
+// ========== INTRO PROGRESS ==========
+let progress=0;
+const bar=document.getElementById("progress");
+const txt=document.getElementById("progressPercent");
+const intro=document.getElementById("intro");
 
-// שלג
-const snow=[];
-for(let i=0;i<200;i++){
-  snow.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,s:Math.random()*0.6+0.3});
+const interval=setInterval(()=>{
+  progress++;
+  bar.style.width=progress+"%";
+  txt.textContent=progress+"%";
+  if(progress>=100){
+    clearInterval(interval);
+    intro.style.transition="opacity 0.5s";
+    intro.style.opacity=0;
+    setTimeout(()=>intro.remove(),500);
+  }
+},30);
+
+// ========== TIMER ==========
+const timerEl=document.getElementById("timer");
+const schedule=[
+  {hour:11,type:'training'}, {hour:12,type:'combat'},
+  {hour:13,type:'training'}, {hour:14,type:'combat'},
+  {hour:15,type:'training'}, {hour:16,type:'combat'},
+  {hour:17,type:'training'}, {hour:18,type:'combat'},
+  {hour:19,type:'combat'}, {hour:20,type:'combat'},
+  {hour:21,type:'training'}, {hour:22,type:'night'}
+];
+
+function updateTimer(){
+  const now=new Date();
+  const currentHour=now.getHours();
+  const next=schedule.find(e=>e.hour>currentHour)||schedule[0];
+  let targetDay=now.getDate();
+  if(next.hour<=currentHour) targetDay+=1;
+  const target=new Date(now.getFullYear(),now.getMonth(),targetDay,next.hour,0,0);
+  let remaining=Math.floor((target-now)/1000);
+  const m=Math.floor(remaining/60).toString().padStart(2,'0');
+  const s=(remaining%60).toString().padStart(2,'0');
+  timerEl.textContent=`${m}:${s} עד ${next.type==='training'?'אימון':'לחימה'}`;
 }
+updateTimer();
+setInterval(updateTimer,1000);
 
-// ברקים
-let lightning=[],last=0;
-let screenShake=0;
+// ========== CANVAS ==========
+const c=document.getElementById("effectCanvas");
+const ctx=c.getContext("2d");
+function resize(){c.width=innerWidth;c.height=innerHeight;}
+resize();window.addEventListener("resize",resize);
+
+let snow=[...Array(200)].map(()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*2+1,s:Math.random()*0.6+0.3}));
+let lightning=[],last=0,screenShake=0;
+
 function createLightning(){
-  let x=Math.random()*canvas.width,y=0,path=[];
-  while(y<canvas.height){y+=15;x+=Math.random()*30-15;path.push({x,y})}
+  let x=Math.random()*c.width,y=0,path=[];
+  while(y<c.height){y+=15;x+=Math.random()*30-15;path.push({x,y})}
   lightning.push({path,life:20});
   screenShake=5;
 }
 
 function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.clearRect(0,0,c.width,c.height);
   snow.forEach(s=>{
     ctx.beginPath();
     ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
     ctx.fillStyle="rgba(255,255,255,.8)";
     ctx.fill();
     s.y+=s.s;
-    if(s.y>canvas.height) s.y=0;
+    if(s.y>c.height)s.y=0;
   });
   if(Date.now()-last>2000+Math.random()*1000){createLightning();last=Date.now();}
   lightning.forEach((l,i)=>{
@@ -430,61 +450,12 @@ function draw(){
   if(screenShake>0){
     const dx=(Math.random()-0.5)*screenShake*2;
     const dy=(Math.random()-0.5)*screenShake*2;
-    canvas.style.transform=`translate(${dx}px, ${dy}px)`;
+    c.style.transform=`translate(${dx}px, ${dy}px)`;
     screenShake--;
-  } else canvas.style.transform='translate(0,0)';
+  } else c.style.transform='translate(0,0)';
   requestAnimationFrame(draw);
 }
 draw();
-
-// ===== PROGRESS BAR עם אחוזים 3 שניות =====
-document.addEventListener("DOMContentLoaded", () => {
-  let progress = 0;
-  const progressBar = document.getElementById("progress");
-  const progressPercent = document.getElementById("progressPercent");
-  const intro = document.getElementById("intro");
-  const totalDuration = 3000;
-  const steps = 100;
-  const intervalTime = totalDuration / steps;
-
-  const progressInterval = setInterval(() => {
-    progress++;
-    progressBar.style.width = progress + '%';
-    progressPercent.textContent = progress + '%';
-    if (progress >= 100) {
-      clearInterval(progressInterval);
-      intro.style.transition = "opacity 0.5s";
-      intro.style.opacity = 0;
-      setTimeout(()=>intro.remove(),500);
-    }
-  }, intervalTime);
-
-  // ===== TIMER לפי לוח הזמנים =====
-  const timerEl = document.getElementById("timer");
-  const schedule = [
-    { hour: 11, type: 'training' }, { hour: 12, type: 'combat' },
-    { hour: 13, type: 'training' }, { hour: 14, type: 'combat' },
-    { hour: 15, type: 'training' }, { hour: 16, type: 'combat' },
-    { hour: 17, type: 'training' }, { hour: 18, type: 'combat' },
-    { hour: 19, type: 'combat' }, { hour: 20, type: 'combat' },
-    { hour: 21, type: 'training' }, { hour: 22, type: 'night' }
-  ];
-
-  function updateTimer() {
-    const now = new Date();
-    const currentHour = now.getHours();
-    const nextEvent = schedule.find(e => e.hour > currentHour) || schedule[0];
-    let targetDay = now.getDate();
-    if (nextEvent.hour <= currentHour) targetDay += 1;
-    const target = new Date(now.getFullYear(), now.getMonth(), targetDay, nextEvent.hour, 0, 0);
-    let remaining = Math.floor((target - now) / 1000);
-    const minutes = Math.floor(remaining / 60).toString().padStart(2,'0');
-    const seconds = (remaining % 60).toString().padStart(2,'0');
-    timerEl.textContent = `${minutes}:${seconds} עד ${nextEvent.type === 'training' ? 'אימון' : 'לחימה'}`;
-  }
-  updateTimer();
-  setInterval(updateTimer,1000);
-});
 </script>
 
 </body>
