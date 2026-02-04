@@ -1,339 +1,785 @@
 <!DOCTYPE html>
 <html lang="he">
 <head>
-<meta charset="UTF-8">
-<title>PG - Perfect Gaming</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;800&display=swap');
-*{margin:0;padding:0;box-sizing:border-box}
-::-webkit-scrollbar { display: none; }
-html { -ms-overflow-style: none; scrollbar-width: none; }
-body{
-  font-family:'Heebo',sans-serif;
-  background:radial-gradient(circle at top,#220000,#050000);
-  color:#fff;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  overflow-x:hidden;
-}
-#effectCanvas{ position:fixed; inset:0; z-index:10000; pointer-events:none; }
-#intro{
-  position:fixed; inset:0;
-  background:radial-gradient(circle at top,#220000,#050000);
-  z-index:9999; display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.intro-fade-out { opacity: 0; transform: scale(1.5); filter: blur(10px); pointer-events: none; }
-.intro-logo-wrapper{
-  width:180px; height:180px; border-radius:30px; padding:10px;
-  background:rgba(255,0,0,0.3); box-shadow:0 0 60px red;
-  display:flex; align-items:center; justify-content:center; animation:spin 6s linear infinite;
-}
-.intro-logo{ width:160px; height:160px; border-radius:24px; background:url("PGLOGOGIF.gif") center/cover no-repeat; }
-#progressBar{ margin-top:30px; width:80%; max-width:400px; height:8px; background:rgba(255,255,255,0.1); border-radius:10px; overflow:hidden; }
-#progress{ width:0%; height:100%; background:red; box-shadow:0 0 15px red; transition:width 0.1s linear; }
-.logo-wrapper{ margin-top:40px; z-index:10; display:flex; flex-direction:column; align-items:center; width:100%; }
-.logo-frame{ width:160px; height:160px; border-radius:25px; padding:10px; background:rgba(255,0,0,0.2); box-shadow:0 0 50px rgba(255,0,0,0.3); display:flex; align-items:center; justify-content:center; animation:spin 20s linear infinite; }
-.logo{ width:140px; height:140px; border-radius:20px; background:url("PGLOGOGIF.gif") center/cover no-repeat; }
-#serverButton{ margin-top:20px; padding:12px 30px; font-size:18px; font-weight:800; color:white; background:red; border-radius:50px; text-decoration:none; box-shadow:0 10px 30px rgba(255,0,0,0.3); transition: .4s; z-index:10; border:none; cursor:pointer;}
-#serverButton:hover{ transform: translateY(-5px); box-shadow: 0 15px 40px rgba(255,0,0,0.5); }
-.server-status-card {
-    margin-top: 25px; background: rgba(30, 0, 0, 0.85); backdrop-filter: blur(5px);
-    border: 1px solid red; border-radius: 50px; padding: 12px 25px;
-    display: flex; flex-direction: row; align-items: center; gap: 15px; direction: rtl; z-index: 10;
-}
-.dot { width: 10px; height: 10px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 15px #4ade80; }
-.dot.offline { background: #ff4d4d; box-shadow: 0 0 15px #ff4d4d; }
-.action-btn { background: rgba(255,255,255,0.1); border:none; color:white; cursor:pointer; padding: 6px 14px; border-radius: 50px; font-size:13px; transition:0.3s; font-weight: 800; border: 1px solid rgba(255,0,0,0.3); }
-.action-btn:hover { background: red; border-color: white; transform: scale(1.05); }
-.section-title { color:red; font-size:28px; margin: 50px 0 20px; z-index:10; font-weight:800; text-shadow: 0 0 10px red; }
-.vs-container{ display:flex; align-items:center; justify-content:center; gap:40px; flex-wrap:wrap; z-index:10; width: 95%; margin-top: 20px; }
-.vs-glow { font-size: 70px; font-weight: 900; color: #fff; text-shadow: 0 0 20px red; animation: vsPulse 1.5s ease-in-out infinite alternate; }
-@keyframes vsPulse { from { transform: scale(1); } to { transform: scale(1.1); } }
-.card{ width:350px; min-height: 300px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:24px; padding:30px; text-align: center; transition: 0.4s; backdrop-filter: blur(10px); display: flex; flex-direction: column; justify-content: space-between; }
-.card p { font-size: 15px; line-height: 1.6; color: #ccc; margin-top: 15px; direction: rtl; text-align: right;}
-.rank-btn { width:100%; margin-top:20px; padding:12px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; cursor: pointer; transition: 0.3s; font-weight: 800; }
-.rank-btn:hover { background: rgba(255,0,0,0.2); border-color: red; }
-.schedule-box { background: rgba(255,0,0,0.05); border: 1px solid red; border-radius: 20px; padding: 25px; width: 90%; max-width: 500px; z-index: 10; direction: rtl; }
-.rules-list { list-style: none; }
-.rules-list li { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 15px; font-size: 16px; }
-.rules-list li::before { content: "●"; color: red; }
-.modal { display: none; position: fixed; inset: 0; z-index: 20000; background: rgba(0,0,0,0.9); backdrop-filter: blur(15px); align-items: center; justify-content: center; padding: 20px; }
-.modal.active { display: flex; }
-.modal-content { background: #0a0a0a; width: 100%; max-width: 500px; max-height: 80vh; border-radius: 30px; border-top: 5px solid red; position: relative; display:flex; flex-direction:column; overflow: hidden; }
-.modal-body { overflow-y: auto; padding: 25px; direction: rtl; }
-.close-modal { position: absolute; top: 15px; left: 15px; cursor: pointer; color: white; font-size: 24px; z-index: 5; }
-#modalListContainer table { width: 100%; border-collapse: collapse; }
-.list-row { border-bottom: 1px solid rgba(255,255,255,0.05); opacity: 0; transform: translateX(20px); transition: 0.3s; }
-.list-row.show { opacity: 1; transform: translateX(0); }
-.list-row td { padding: 10px; text-align: right; vertical-align: middle; }
-.id-badge { color: red; font-weight: 800; text-align: left !important; font-family: monospace; }
-.unit-divider { background: rgba(255,0,0,0.1); color: red; font-size: 14px; font-weight: 800; text-align: center; padding: 8px 0; margin: 15px 0 5px 0; border-radius: 5px; border: 1px solid rgba(255,0,0,0.2); }
-.unit-divider.idf { background: rgba(107,142,35,0.1); color: #6b8e23; border-color: rgba(107,142,35,0.2); }
-.links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; width: 90%; max-width: 1000px; margin-bottom: 50px; z-index: 10; }
-.link-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,0,0,0.2); border-radius: 15px; padding: 20px; text-decoration: none; color: white; text-align: center; transition: 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; height: 80px; }
-.link-item h3 { font-size: 18px; font-weight: 800; letter-spacing: 1px; transition: 0.3s; }
-.link-item:hover { background: rgba(255,0,0,0.1); border-color: red; transform: translateY(-5px); box-shadow: 0 8px 25px rgba(255,0,0,0.2); }
-.link-item:hover h3 { color: red; text-shadow: 0 0 10px rgba(255,0,0,0.5); }
-footer{ padding:40px; color:#555; text-align:center; font-size:14px; width: 100%; border-top: 1px solid rgba(255,255,255,0.05); line-height: 1.5; }
-@keyframes spin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
-</style>
+    <meta charset="UTF-8">
+    <title>PG - Perfect Gaming V2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;500;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        html {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        body {
+            font-family: 'Heebo',sans-serif;
+            background: radial-gradient(circle at top,#220033,#050005);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        #effectCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        #intro {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at top,#220033,#050005);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .intro-fade-out {
+            opacity: 0;
+            transform: scale(1.5);
+            filter: blur(10px);
+            pointer-events: none;
+        }
+
+        .intro-logo-wrapper {
+            width: 180px;
+            height: 180px;
+            border-radius: 30px;
+            padding: 10px;
+            background: rgba(128,0,255,0.3);
+            box-shadow: 0 0 60px purple;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: spin 6s linear infinite;
+        }
+
+        .intro-logo {
+            width: 160px;
+            height: 160px;
+            border-radius: 24px;
+            background: url("PGLOGOGIF.gif") center/cover no-repeat;
+        }
+
+        #progressBar {
+            margin-top: 30px;
+            width: 80%;
+            max-width: 400px;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        #progress {
+            width: 0%;
+            height: 100%;
+            background: purple;
+            box-shadow: 0 0 15px purple;
+            transition: width 0.1s linear;
+        }
+
+        .glitch {
+            position: relative;
+            animation: glitch-subtle 4s infinite;
+            color: #bf40ff;
+            text-shadow: 0 0 20px rgba(191, 64, 255, 0.7);
+        }
+
+        @keyframes glitch-subtle {
+            0%, 90%, 100% {
+                transform: translate(0);
+                text-shadow: 0 0 20px rgba(191, 64, 255, 0.7);
+            }
+
+            92% {
+                transform: translate(-1px, 1px);
+                text-shadow: 2px 0 purple;
+            }
+
+            94% {
+                transform: translate(1px, -1px);
+                text-shadow: -2px 0 #a855f7;
+            }
+
+            96% {
+                transform: translate(0);
+            }
+        }
+
+        .logo-wrapper {
+            margin-top: 60px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo-frame {
+            width: 160px;
+            height: 160px;
+            border-radius: 25px;
+            padding: 10px;
+            background: rgba(128,0,255,0.2);
+            box-shadow: 0 0 50px rgba(128,0,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: spin 20s linear infinite;
+        }
+
+        .logo {
+            width: 140px;
+            height: 140px;
+            border-radius: 20px;
+            background: url("PGLOGOGIF.gif") center/cover no-repeat;
+        }
+
+        .server-name-label {
+            margin-top: 20px;
+            font-size: 42px;
+            font-weight: 800;
+            color: #bf40ff;
+            text-shadow: 0 0 20px purple;
+            letter-spacing: 2px;
+        }
+
+        #serverButton {
+            margin-top: 20px;
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: 800;
+            color: white;
+            background: purple;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(128,0,255,0.3);
+            transition: .4s;
+            z-index: 10;
+            border: none;
+            cursor: pointer;
+        }
+
+            #serverButton:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 40px rgba(128,0,255,0.5);
+                background: #9d00ff;
+            }
+
+        .server-status-card {
+            margin-top: 25px;
+            background: rgba(30, 0, 40, 0.85);
+            backdrop-filter: blur(5px);
+            border: 1px solid purple;
+            border-radius: 50px;
+            padding: 12px 25px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 15px;
+            direction: rtl;
+            z-index: 10;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #bf40ff;
+            box-shadow: 0 0 15px #bf40ff;
+        }
+
+            .dot.offline {
+                background: #ff4d4d;
+                box-shadow: 0 0 15px #ff4d4d;
+            }
+
+        .action-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 13px;
+            transition: 0.3s;
+            font-weight: 800;
+            border: 1px solid rgba(128,0,255,0.3);
+        }
+
+            .action-btn:hover {
+                background: purple;
+                border-color: white;
+                transform: scale(1.05);
+            }
+
+        .section-title {
+            color: purple;
+            font-size: 28px;
+            margin: 50px 0 20px;
+            z-index: 10;
+            font-weight: 800;
+            text-shadow: 0 0 10px purple;
+        }
+
+        .vs-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            z-index: 10;
+            width: 95%;
+            margin-top: 20px;
+        }
+
+        .vs-glow {
+            font-size: 70px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 20px purple;
+            animation: vsPulse 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes vsPulse {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.1);
+            }
+        }
+
+        .card {
+            width: 350px;
+            min-height: 300px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+            .card:hover {
+                transform: scale(1.05);
+                box-shadow: 0 0 40px rgba(128,0,255,0.4);
+                border-color: purple;
+            }
+
+            .card p {
+                font-size: 15px;
+                line-height: 1.6;
+                color: #ccc;
+                margin-top: 15px;
+                direction: rtl;
+                text-align: right;
+            }
+
+        .rank-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 800;
+        }
+
+            .rank-btn:hover {
+                background: rgba(128,0,255,0.2);
+                border-color: purple;
+            }
+
+        .schedule-box {
+            background: rgba(128,0,255,0.05);
+            border: 1px solid purple;
+            border-radius: 20px;
+            padding: 25px;
+            width: 90%;
+            max-width: 500px;
+            z-index: 10;
+            direction: rtl;
+        }
+
+        .rules-list {
+            list-style: none;
+        }
+
+            .rules-list li {
+                padding: 12px;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                font-size: 16px;
+            }
+
+                .rules-list li::before {
+                    content: "●";
+                    color: purple;
+                }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 20000;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(15px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+            .modal.active {
+                display: flex;
+            }
+
+        .modal-content {
+            background: #0a0a0a;
+            width: 100%;
+            max-width: 500px;
+            max-height: 80vh;
+            border-radius: 30px;
+            border-top: 5px solid purple;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-body {
+            overflow-y: auto;
+            padding: 25px;
+            direction: rtl;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            cursor: pointer;
+            color: white;
+            font-size: 24px;
+            z-index: 5;
+        }
+
+        #modalListContainer table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .list-row {
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            opacity: 0;
+            transform: translateX(20px);
+            transition: 0.3s;
+        }
+
+            .list-row.show {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            .list-row td {
+                padding: 10px;
+                text-align: right;
+                vertical-align: middle;
+            }
+
+        .id-badge {
+            color: purple;
+            font-weight: 800;
+            text-align: left !important;
+            font-family: monospace;
+        }
+
+        .unit-divider {
+            background: rgba(128,0,255,0.1);
+            color: purple;
+            font-size: 14px;
+            font-weight: 800;
+            text-align: center;
+            padding: 8px 0;
+            margin: 15px 0 5px 0;
+            border-radius: 5px;
+            border: 1px solid rgba(128,0,255,0.2);
+        }
+
+            .unit-divider.idf {
+                background: rgba(128,0,255,0.1);
+                color: #a855f7;
+                border-color: rgba(128,0,255,0.2);
+            }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            width: 90%;
+            max-width: 1000px;
+            margin-bottom: 50px;
+            z-index: 10;
+        }
+
+        .link-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(128,0,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-decoration: none;
+            color: white;
+            text-align: center;
+            transition: 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 80px;
+        }
+
+            .link-item h3 {
+                font-size: 18px;
+                font-weight: 800;
+                letter-spacing: 1px;
+                transition: 0.3s;
+            }
+
+            .link-item:hover {
+                background: rgba(128,0,255,0.1);
+                border-color: purple;
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(128,0,255,0.2);
+            }
+
+                .link-item:hover h3 {
+                    color: purple;
+                    text-shadow: 0 0 10px rgba(128,0,255,0.5);
+                }
+
+        footer {
+            padding: 40px;
+            color: #555;
+            text-align: center;
+            font-size: 14px;
+            width: 100%;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            line-height: 1.5;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
 <body>
-<canvas id="effectCanvas"></canvas>
-<div id="mainModal" class="modal" onclick="if(event.target == this) closeModal()">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeModal()">✕</span>
-        <div class="modal-body">
-            <h2 id="modalTitle" style="text-align:center; margin-bottom:10px; font-weight:800;"></h2>
-            <div id="modalListContainer"></div>
+    <canvas id="effectCanvas"></canvas>
+    <div id="mainModal" class="modal" onclick="if(event.target == this) closeModal()">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">✕</span>
+            <div class="modal-body">
+                <h2 id="modalTitle" style="text-align:center; margin-bottom:10px; font-weight:800;"></h2>
+                <div id="modalListContainer"></div>
+            </div>
         </div>
     </div>
-</div>
-<div id="intro">
-  <div class="intro-logo-wrapper"><div class="intro-logo"></div></div>
-  <h1 style="margin-top: 30px; font-weight: 800;">PG MILSIM</h1>
-  <div id="progressBar"><div id="progress"></div></div>
-</div>
-<div class="logo-wrapper">
-  <div class="logo-frame"><div class="logo"></div></div>
-  <a href="fivem://connect/9p77qb" id="serverButton">התחברות לשרת</a>
-  <div class="server-status-card">
-      <div style="display:flex; align-items:center; gap:8px; padding-left:10px;"><div id="statusDot" class="dot"></div><span id="statusTxt" style="font-weight:800;">טוען...</span></div>
-      <div style="width: 1px; height: 15px; background: rgba(255,255,255,0.1);"></div>
-      <div>שחקנים: <b id="playerCount">-- / --</b></div>
-      <button class="action-btn" onclick="showPlayers()">רשימת שחקנים & ID</button>
-  </div>
-</div>
-<h2 class="section-title">הכוחות בשטח</h2>
-<section class="vs-container">
-    <div class="card" style="border-top: 4px solid red;">
-      <h3 style="color:red; font-size:24px;">ארגון פיג"י</h3>
-      <p>צבא של צללים הפועל מתוך השטח הבנוי והתת-קרקע. מומחים במארבי פתע, שימוש במטענים ולחימה אסימטרית אכזרית. עבורם, כל בית הוא מבצר וכל רחוב הוא מלכודת מוות לכוחות הפולשים.</p>
-      <button class="rank-btn" onclick="openRanks('pg')">לצפייה בדרגות</button>
+    <div id="intro">
+        <div class="intro-logo-wrapper"><div class="intro-logo"></div></div>
+        <h1 class="glitch" style="margin-top: 30px; font-weight: 800;">PG MILSIM V2</h1>
+        <div id="progressBar"><div id="progress"></div></div>
     </div>
-    <div class="vs-glow">VS</div>
-    <div class="card" style="border-top: 4px solid #6b8e23;">
-      <h3 style="color:#6b8e23; font-size:24px;">צה״ל</h3>
-      <p>הכוח הצבאי החזק באזור. משתמש במודיעין מדויק, עליונות אווירית וכוחות קרקע מיומנים כדי לטהר קיני טרור. פועלים תחת פקודות מחמירות ומשמעת צבאית למיגור האיום בכל הגזרות.</p>
-      <button class="rank-btn" onclick="openRanks('idf')" style="border-color: #6b8e23;">לצפייה בדרגות</button>
+    <div class="logo-wrapper">
+        <div class="logo-frame"><div class="logo"></div></div>
+        <h1 class="server-name-label glitch">PG MILSIM V2</h1>
+        <a href="fivem://connect/9p77qb" id="serverButton">התחברות לשרת</a>
+        <div class="server-status-card">
+            <div style="display:flex; align-items:center; gap:8px; padding-left:10px;"><div id="statusDot" class="dot"></div><span id="statusTxt" style="font-weight:800;">טוען...</span></div>
+            <div style="width: 1px; height: 15px; background: rgba(255,255,255,0.1);"></div>
+            <div>שחקנים: <b id="playerCount">-- / --</b></div>
+            <button class="action-btn" onclick="showPlayers()">רשימת שחקנים & ID</button>
+        </div>
     </div>
-</section>
-<h2 class="section-title">לוח זמנים</h2>
-<div class="schedule-box">
-    <div id="timer" style="font-size: 26px; font-weight: 800; text-align: center; margin-bottom: 20px; text-shadow: 0 0 10px red;">מחשב זמן...</div>
-    <ul class="rules-list" id="fullSchedule"></ul>
-</div>
-<h2 class="section-title">קישורים מהירים</h2>
-<div class="links-grid">
-    <a href="https://discord.gg/epE6e2T4W8" target="_blank" class="link-item"><h3>DISCORD</h3></a>
-    <a href="https://osublo3211-gif.github.io/perfectgaming-unban/?v=3" target="_blank" class="link-item"><h3>UNBAN</h3></a>
-    <a href="https://my.israelgives.org/he/campaign/pgmilsim" target="_blank" class="link-item"><h3>DONATE</h3></a>
-</div>
-<footer>
-    © Pg - Perfect Gaming | 2026<br>
-    נוצר על ידי Yossi Shalom / Oz
-</footer>
-<script>
-const pgRanks = [
-    {type: "divider", label: "לוחמים"}, "חייל ארגון", "לוחם ארגון", "אחראי מחבלים", "אחראי מבצעים",
-    {type: "divider", label: "יחידת אסד"}, "לוחם", "לוחם בכיר", "סגן מפקד", "מפקד",
-    {type: "divider", label: "עורב שחור"}, "מחבל", "מחבל בכיר", "סגן מפקד", "מפקד",
-    {type: "divider", label: "פיקוד רצועה"}, "סגן מפקד רצועה", "מפקד רצועה",
-    {type: "divider", label: "פיקוד אווירי"}, "סגן מפקד אווירי", "מפקד אווירי",
-    {type: "divider", label: "הנהגה עליונה"}, "סגן מפקד כללי", "מפקד כללי", "סמזכ\"ל", "מזכ\"ל"
-];
-const idfRanks = [
-    {type: "divider", label: "דרגות חוגרים"}, "טוראי", "רבט", "סַמָּל", "סמל ראשון",
-    {type: "divider", label: "דרגות קצונה"}, "סגמ", "סגן", "סרן", "רב סרן", "סגן אלוף", "אלוף משנה", "תת אלוף", "אלוף", "רב אלוף",
-    {type: "divider", label: "חיל האוויר"}, "טייס חיל-האוויר", "טייס בכיר חיל-האוויר", "סגן משנה חיל-האוויר", "סגן מפקד חיל-האוויר", "מפקד חיל-האוויר",
-    {type: "divider", label: "יחידת אגוז"}, "לוחם-אגוז", "לוחם בכיר-אגוז",
-    {type: "divider", label: "משמר הגבול"}, "חייל", "חייל בכיר", "פקד", "רב-פקד", "סגן ניצב", "ניצב משנה", "תת ניצב", "ניצב",
-    {type: "divider", label: "יחידת ימ\"מ"}, "רסמ", "רסב", "סגן מפקד יממ", "מפקד יממ"
-];
-const scheduleData = [
-    {h:11,l:"אימון"}, {h:12,l:"לחימה"}, {h:13,l:"אימון"},
-    {h:14,l:"לחימה"}, {h:15,l:"אימון"}, {h:16,l:"לחימה"},
-    {h:17,l:"אימון"}, {h:18,l:"לחימה"}, {h:19,l:"לחימה"},
-    {h:20,l:"לחימה"}, {h:21,l:"אימון"}, {h:22,l:"לחימה ללא הגבלה"}
-];
-function updateSchedule() {
-    const now = new Date();
-    const curH = now.getHours();
-    const listEl = document.getElementById('fullSchedule');
-    if(!listEl) return;
-    listEl.innerHTML = "";
-    scheduleData.forEach(ev => {
-        const li = document.createElement('li');
-        li.innerHTML = `<b>${ev.h}:00</b> - ${ev.l}`;
-        if (curH === ev.h) {
-            li.style.color = "red";
-            li.style.fontWeight = "800";
-        }
-        listEl.appendChild(li);
-    });
-    
-    let currentEvent = scheduleData.find(e => e.h === curH);
-    let timerText = "";
-
-    if (currentEvent) {
-        if (currentEvent.l === "לחימה ללא הגבלה") {
-            // חישוב זמן עד 11:00 בבוקר למחרת
-            let target = new Date();
-            target.setHours(11, 0, 0, 0);
-            if (now.getHours() >= 11) {
-                target.setDate(target.getDate() + 1);
+    <h2 class="section-title glitch">הכוחות בשטח</h2>
+    <section class="vs-container">
+        <div class="card" style="border-top: 4px solid purple;">
+            <h3 style="color:purple; font-size:24px;">ארגון פיג"י</h3>
+            <p>צבא של צללים הפועל מתוך השטח הבנוי והתת-קרקע. מומחים במארבי פתע, שימוש במטענים ולחימה אסימטרית אכזרית. עבורם, כל בית הוא מבצר וכל רחוב הוא מלכודת מוות לכוחות הפולשים.</p>
+            <button class="rank-btn" onclick="openRanks('pg')">לצפייה בדרגות</button>
+        </div>
+        <div class="vs-glow">VS</div>
+        <div class="card" style="border-top: 4px solid purple;">
+            <h3 style="color:#a855f7; font-size:24px;">צה״ל</h3>
+            <p>הכוח הצבאי החזק באזור. משתמש במודיעין מדויק, עליונות אווירית וכוחות קרקע מיומנים כדי לטהר קיני טרור. פועלים תחת פקודות מחמירות ומשמעת צבאית למיגור האיום בכל הגזרות.</p>
+            <button class="rank-btn" onclick="openRanks('idf')" style="border-color: #a855f7;">לצפייה בדרגות</button>
+        </div>
+    </section>
+    <h2 class="section-title">לוח זמנים</h2>
+    <div class="schedule-box">
+        <div id="timer" style="font-size: 26px; font-weight: 800; text-align: center; margin-bottom: 20px; text-shadow: 0 0 10px purple;">מחשב זמן...</div>
+        <ul class="rules-list" id="fullSchedule"></ul>
+    </div>
+    <h2 class="section-title">קישורים מהירים</h2>
+    <div class="links-grid">
+        <a href="https://discord.gg/epE6e2T4W8" target="_blank" class="link-item"><h3>DISCORD</h3></a>
+        <a href="https://osublo3211-gif.github.io/perfectgaming-unban/?v=3" target="_blank" class="link-item"><h3>UNBAN</h3></a>
+        <a href="https://my.israelgives.org/he/campaign/pgmilsim" target="_blank" class="link-item"><h3>DONATE</h3></a>
+    </div>
+    <footer>
+        © Pg - Perfect Gaming | 2026<br>
+        נוצר על ידי Yossi Shalom / Oz
+    </footer>
+    <script>
+        const pgRanks = [
+            { type: "divider", label: "לוחמים" },
+            "0 - חייל ארגון", "1 - לוחם ארגון", "2 - אחראי מחבלים", "3 - אחראי מבצעים",
+            { type: "divider", label: "יחידת אסד" },
+            "4 - לוחם", "5 - לוחם בכיר", "6 - סגן מפקד", "7 - מפקד",
+            { type: "divider", label: "אל סחרא" },
+            "8 - חייל", "9 - חייל בכיר", "10 - סגן מפקד", "11 - מפקד",
+            { type: "divider", label: "פיקוד רצועה" },
+            "12 - סגן מפקד רצועה", "13 - מפקד רצועה",
+            { type: "divider", label: "פיקוד אווירי" },
+            "14 - סגן מפקד אווירי", "15 - מפקד אווירי",
+            { type: "divider", label: "הנהגה עליונה" },
+            "16 - סגן מפקד כללי", "17 - מפקד כללי", "18 - סמזכ\"ל", "19 - מזכ\"ל"
+        ];
+        const idfRanks = [
+            { type: "divider", label: "דרגות חוגרים" },
+            "0 - טוראי", "1 - רבט", "2 - סַמָּל", "3 - סמל ראשון",
+            { type: "divider", label: "דרגות קצונה" },
+            "4 - סגמ", "5 - סגן", "6 - סרן", "7 - רב סרן", "8 - סגן אלוף", "9 - אלוף משנה", "10 - תת אלוף", "11 - אלוף", "12 - רב אלוף",
+            { type: "divider", label: "חיל האוויר" },
+            "13 - טייס חיל-האוויר", "14 - טייס בכיר חיל-האוויר", "15 - סגן משנה חיל-האוויר", "16 - סגן מפקד חיל-האוויר", "17 - מפקד חיל-האוויר",
+            { type: "divider", label: "יחידת אגוז" },
+            "18 - לוחם-אגוז", "19 - לוחם בכיר-אגוז",
+            { type: "divider", label: "משמר הגבול" },
+            "20 - חייל", "21 - חייל בכיר", "22 - פקד", "23 - רב-פקד", "24 - סגן ניצב", "25 - ניצב משנה", "26 - תת ניצב", "27 - ניצב",
+            { type: "divider", label: "יחידת ימ\"מ" },
+            "28 - רסמ", "29 - רסב", "30 - סגן מפקד יממ", "31 - מפקד יממ"
+        ];
+        const scheduleData = [
+            { h: 11, l: "אימון" }, { h: 12, l: "לחימה" }, { h: 13, l: "אימון" },
+            { h: 14, l: "לחימה" }, { h: 15, l: "אימון" }, { h: 16, l: "לחימה" },
+            { h: 17, l: "אימון" }, { h: 18, l: "לחימה" }, { h: 19, l: "לחימה" },
+            { h: 20, l: "לחימה" }, { h: 21, l: "אימון" }, { h: 22, l: "לחימה ללא הגבלה" }
+        ];
+        function updateSchedule() {
+            const now = new Date();
+            const curH = now.getHours();
+            const listEl = document.getElementById('fullSchedule');
+            if (!listEl) return;
+            listEl.innerHTML = "";
+            scheduleData.forEach(ev => {
+                const li = document.createElement('li');
+                li.innerHTML = `<b>${ev.h}:00</b> - ${ev.l}`;
+                if (curH === ev.h) {
+                    li.style.color = "purple";
+                    li.style.fontWeight = "800";
+                }
+                listEl.appendChild(li);
+            });
+            let currentEvent = scheduleData.find(e => e.h === curH);
+            let timerText = "";
+            if (currentEvent) {
+                if (currentEvent.l === "לחימה ללא הגבלה") {
+                    let target = new Date();
+                    target.setHours(11, 0, 0, 0);
+                    if (now.getHours() >= 11) {
+                        target.setDate(target.getDate() + 1);
+                    }
+                    const diff = Math.floor((target - now) / 1000);
+                    const h = Math.floor(diff / 3600).toString().padStart(2, '0');
+                    const m = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
+                    const s = (diff % 60).toString().padStart(2, '0');
+                    timerText = `${h}:${m}:${s} עד אימון (11:00)`;
+                } else {
+                    let endH = curH;
+                    for (let i = scheduleData.findIndex(e => e.h === curH); i < scheduleData.length; i++) {
+                        if (scheduleData[i].l === currentEvent.l) {
+                            endH = scheduleData[i].h;
+                        } else { break; }
+                    }
+                    const target = new Date(); target.setHours(endH + 1, 0, 0, 0);
+                    const diff = Math.floor((target - now) / 1000);
+                    if (diff <= 0) { timerText = "מעדכן..."; }
+                    else {
+                        const h = Math.floor(diff / 3600).toString().padStart(2, '0');
+                        const m = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
+                        const s = (diff % 60).toString().padStart(2, '0');
+                        timerText = `${h}:${m}:${s} עד סוף ה${currentEvent.l}`;
+                    }
+                }
+            } else {
+                let nextEv = scheduleData.find(e => e.h > curH);
+                if (nextEv) {
+                    const target = new Date(); target.setHours(nextEv.h, 0, 0, 0);
+                    const diff = Math.floor((target - now) / 1000);
+                    const h = Math.floor(diff / 3600).toString().padStart(2, '0');
+                    const m = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
+                    const s = (diff % 60).toString().padStart(2, '0');
+                    timerText = `${h}:${m}:${s} עד ${nextEv.l}`;
+                } else {
+                    let target = new Date();
+                    target.setHours(11, 0, 0, 0);
+                    target.setDate(target.getDate() + 1);
+                    const diff = Math.floor((target - now) / 1000);
+                    const h = Math.floor(diff / 3600).toString().padStart(2, '0');
+                    const m = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
+                    const s = (diff % 60).toString().padStart(2, '0');
+                    timerText = `${h}:${m}:${s} עד אימון`;
+                }
             }
-            const diff = Math.floor((target - now) / 1000);
-            const h = Math.floor(diff/3600).toString().padStart(2,'0');
-            const m = Math.floor((diff%3600)/60).toString().padStart(2,'0');
-            const s = (diff%60).toString().padStart(2,'0');
-            timerText = `${h}:${m}:${s} עד אימון (11:00)`;
-        } else {
-            let endH = curH;
-            for (let i = scheduleData.findIndex(e => e.h === curH); i < scheduleData.length; i++) {
-                if (scheduleData[i].l === currentEvent.l) {
-                    endH = scheduleData[i].h;
-                } else { break; }
+            document.getElementById("timer").textContent = timerText;
+        }
+        setInterval(updateSchedule, 1000); updateSchedule();
+        async function showPlayers() {
+            const container = document.getElementById('modalListContainer');
+            const title = document.getElementById('modalTitle');
+            title.textContent = "שחקנים מחוברים";
+            title.style.color = "purple";
+            container.innerHTML = "<p style='text-align:center;'>טוען נתונים...</p>";
+            document.getElementById('mainModal').classList.add('active');
+            try {
+                const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=https://servers-frontend.fivem.net/api/servers/single/9p77qb`);
+                const data = await res.json();
+                const players = data.Data.players;
+                if (!players || players.length === 0) {
+                    container.innerHTML = "<p style='text-align:center;'>אין שחקנים מחוברים.</p>";
+                    return;
+                }
+                let html = "<table>";
+                players.forEach((p, idx) => {
+                    html += `<tr class="list-row" id="p-${idx}">
+                            <td>${p.name}</td>
+                            <td class="id-badge">ID: ${p.id}</td>
+                          </tr>`;
+                });
+                html += "</table>";
+                container.innerHTML = html;
+                players.forEach((_, idx) => {
+                    setTimeout(() => {
+                        const row = document.getElementById(`p-${idx}`);
+                        if (row) row.classList.add('show');
+                    }, idx * 25);
+                });
+            } catch (e) { container.innerHTML = "<p style='text-align:center; color:orange;'>שגיאה בטעינה.</p>"; }
+        }
+        function openRanks(type) {
+            const container = document.getElementById('modalListContainer');
+            const title = document.getElementById('modalTitle');
+            const ranks = type === 'pg' ? pgRanks : idfRanks;
+            title.textContent = type === 'pg' ? "דרגות ארגון פיג\"י" : "דרגות צבא ההגנה לישראל";
+            title.style.color = "purple";
+            let html = "<table>";
+            ranks.forEach((item, idx) => {
+                if (typeof item === 'object') {
+                    html += `<tr class="list-row show"><td colspan="2"><div class="unit-divider idf">${item.label}</div></td></tr>`;
+                } else {
+                    html += `<tr class="list-row" id="r-${idx}"><td style="text-align:center;">${item}</td></tr>`;
+                }
+            });
+            html += "</table>";
+            container.innerHTML = html;
+            document.getElementById('mainModal').classList.add('active');
+            ranks.forEach((item, idx) => {
+                if (typeof item !== 'object') {
+                    setTimeout(() => {
+                        const el = document.getElementById(`r-${idx}`);
+                        if (el) el.classList.add('show');
+                    }, idx * 15);
+                }
+            });
+        }
+        function closeModal() { document.getElementById('mainModal').classList.remove('active'); }
+        async function fetchStatus() {
+            const sTxt = document.getElementById("statusTxt");
+            const pCount = document.getElementById("playerCount");
+            const dot = document.getElementById("statusDot");
+            if (!sTxt) return;
+            try {
+                const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=https://servers-frontend.fivem.net/api/servers/single/9p77qb`);
+                const data = await res.json();
+                if (data && data.Data) {
+                    sTxt.textContent = "ONLINE"; sTxt.style.color = "#bf40ff";
+                    dot.className = "dot";
+                    pCount.textContent = `${data.Data.clients} / ${data.Data.sv_maxclients}`;
+                }
+            } catch (e) {
+                sTxt.textContent = "OFFLINE"; sTxt.style.color = "#ff4d4d";
+                dot.className = "dot offline";
+                pCount.textContent = "0 / 0";
             }
-            const target = new Date(); target.setHours(endH + 1, 0, 0, 0);
-            const diff = Math.floor((target - now) / 1000);
-            if(diff <= 0) { timerText = "מעדכן..."; }
-            else {
-                const h = Math.floor(diff/3600).toString().padStart(2,'0');
-                const m = Math.floor((diff%3600)/60).toString().padStart(2,'0');
-                const s = (diff%60).toString().padStart(2,'0');
-                timerText = `${h}:${m}:${s} עד סוף ה${currentEvent.l}`;
+        }
+        fetchStatus();
+        setInterval(fetchStatus, 45000);
+        let prg = 0; const ivl = setInterval(() => {
+            const pBar = document.getElementById("progress");
+            if (!pBar) return;
+            prg += 2; pBar.style.width = prg + "%";
+            if (prg >= 100) {
+                clearInterval(ivl);
+                const intro = document.getElementById("intro");
+                if (intro) intro.classList.add("intro-fade-out");
             }
+        }, 30);
+        const c = document.getElementById("effectCanvas"); const ctx = c.getContext("2d");
+        function resize() { c.width = window.innerWidth; c.height = window.innerHeight; }
+        resize(); window.onresize = resize;
+        let particles = [...Array(80)].map(() => ({
+            x: Math.random() * c.width,
+            y: Math.random() * c.height,
+            s: Math.random() * 1 + 0.5,
+            o: Math.random() * 0.5,
+            color: Math.random() > 0.5 ? "rgba(128, 0, 255, " : "rgba(200, 200, 255, "
+        }));
+        function draw() {
+            ctx.clearRect(0, 0, c.width, c.height);
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
+                ctx.fillStyle = p.color + p.o + ")";
+                ctx.fill();
+                p.y -= p.s * 0.5;
+                p.x += p.s * 0.3;
+                if (p.y < 0) { p.y = c.height; p.x = Math.random() * c.width; }
+            });
+            requestAnimationFrame(draw);
         }
-    } else {
-        let nextEv = scheduleData.find(e => e.h > curH);
-        if (nextEv) {
-            const target = new Date(); target.setHours(nextEv.h, 0, 0, 0);
-            const diff = Math.floor((target - now) / 1000);
-            const h = Math.floor(diff/3600).toString().padStart(2,'0');
-            const m = Math.floor((diff%3600)/60).toString().padStart(2,'0');
-            const s = (diff%60).toString().padStart(2,'0');
-            timerText = `${h}:${m}:${s} עד ${nextEv.l}`;
-        } else {
-            // אם אחרי 22:00 ואין אירוע (מקרה קצה), יראה זמן עד 11:00
-            let target = new Date();
-            target.setHours(11, 0, 0, 0);
-            target.setDate(target.getDate() + 1);
-            const diff = Math.floor((target - now) / 1000);
-            const h = Math.floor(diff/3600).toString().padStart(2,'0');
-            const m = Math.floor((diff%3600)/60).toString().padStart(2,'0');
-            const s = (diff%60).toString().padStart(2,'0');
-            timerText = `${h}:${m}:${s} עד אימון`;
-        }
-    }
-    document.getElementById("timer").textContent = timerText;
-}
-setInterval(updateSchedule, 1000); updateSchedule();
-async function showPlayers() {
-    const container = document.getElementById('modalListContainer');
-    const title = document.getElementById('modalTitle');
-    title.textContent = "שחקנים מחוברים";
-    title.style.color = "red";
-    container.innerHTML = "<p style='text-align:center;'>טוען נתונים...</p>";
-    document.getElementById('mainModal').classList.add('active');
-    try {
-        const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=https://servers-frontend.fivem.net/api/servers/single/9p77qb`);
-        const data = await res.json();
-        const players = data.Data.players;
-        if (!players || players.length === 0) {
-            container.innerHTML = "<p style='text-align:center;'>אין שחקנים מחוברים.</p>";
-            return;
-        }
-        let html = "<table>";
-        players.forEach((p, idx) => {
-            html += `<tr class="list-row" id="p-${idx}">
-                        <td>${p.name}</td>
-                        <td class="id-badge">ID: ${p.id}</td>
-                     </tr>`;
-        });
-        html += "</table>";
-        container.innerHTML = html;
-        players.forEach((_, idx) => {
-            setTimeout(() => {
-                const row = document.getElementById(`p-${idx}`);
-                if(row) row.classList.add('show');
-            }, idx * 25);
-        });
-    } catch (e) { container.innerHTML = "<p style='text-align:center; color:orange;'>שגיאה בטעינה.</p>"; }
-}
-function openRanks(type) {
-    const container = document.getElementById('modalListContainer');
-    const title = document.getElementById('modalTitle');
-    const ranks = type === 'pg' ? pgRanks : idfRanks;
-    title.textContent = type === 'pg' ? "דרגות ארגון פיג\"י" : "דרגות צבא ההגנה לישראל";
-    title.style.color = type === 'pg' ? "red" : "#6b8e23";
-    let html = "<table>";
-    ranks.forEach((item, idx) => {
-        if (typeof item === 'object') {
-            html += `<tr class="list-row show"><td colspan="2"><div class="unit-divider ${type==='idf'?'idf':''}">${item.label}</div></td></tr>`;
-        } else {
-            html += `<tr class="list-row" id="r-${idx}"><td style="text-align:center;">${item}</td></tr>`;
-        }
-    });
-    html += "</table>";
-    container.innerHTML = html;
-    document.getElementById('mainModal').classList.add('active');
-    ranks.forEach((item, idx) => {
-        if (typeof item !== 'object') {
-            setTimeout(() => {
-                const el = document.getElementById(`r-${idx}`);
-                if(el) el.classList.add('show');
-            }, idx * 15);
-        }
-    });
-}
-function closeModal() { document.getElementById('mainModal').classList.remove('active'); }
-async function fetchStatus() {
-    const sTxt = document.getElementById("statusTxt");
-    const pCount = document.getElementById("playerCount");
-    const dot = document.getElementById("statusDot");
-    if(!sTxt) return;
-    try {
-        const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=https://servers-frontend.fivem.net/api/servers/single/9p77qb`);
-        const data = await res.json();
-        if (data && data.Data) {
-            sTxt.textContent = "ONLINE"; sTxt.style.color = "#4ade80";
-            dot.className = "dot";
-            pCount.textContent = `${data.Data.clients} / ${data.Data.sv_maxclients}`;
-        }
-    } catch (e) { 
-        sTxt.textContent = "OFFLINE"; sTxt.style.color = "#ff4d4d";
-        dot.className = "dot offline";
-        pCount.textContent = "0 / 0"; 
-    }
-}
-fetchStatus();
-setInterval(fetchStatus, 45000);
-let prg=0; const ivl=setInterval(()=>{
-  const pBar = document.getElementById("progress");
-  if(!pBar) return;
-  prg+=2; pBar.style.width=prg+"%";
-  if(prg>=100){ 
-      clearInterval(ivl); 
-      const intro = document.getElementById("intro");
-      if(intro) intro.classList.add("intro-fade-out"); 
-  }
-},30);
-const c=document.getElementById("effectCanvas"); const ctx=c.getContext("2d");
-function resize(){c.width=window.innerWidth; c.height=window.innerHeight;}
-resize(); window.onresize = resize;
-let snow=[...Array(60)].map(()=>({x:Math.random()*c.width, y:Math.random()*c.height, s:Math.random()*0.5+0.2}));
-function draw(){
-  ctx.clearRect(0,0,c.width,c.height); ctx.fillStyle="rgba(255,255,255,0.2)";
-  snow.forEach(s=>{ ctx.beginPath(); ctx.arc(s.x,s.y,1,0,Math.PI*2); ctx.fill(); s.y+=s.s; if(s.y>c.height) s.y=0; });
-  requestAnimationFrame(draw);
-}
-draw();
-</script>
+        draw();
+    </script>
 </body>
 </html>
